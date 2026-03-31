@@ -1,0 +1,53 @@
+.pricing-page { min-height: 100vh; background: var(--bg); }
+.pricing-nav { height: 64px; display: flex; align-items: center; padding: 0 32px; background: rgba(10,10,13,0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; gap: 12px; }
+.nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--text); }
+.brand-name em { font-style: normal; color: var(--accent); }
+.pricing-body { max-width: 980px; margin: 0 auto; padding: 60px 24px 100px; }
+.pricing-header { text-align: center; margin-bottom: 60px; }
+.section-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); margin-bottom: 14px; }
+.pricing-header h1 { font-family: 'Syne', sans-serif; font-size: clamp(32px,5vw,52px); font-weight: 800; color: var(--text); letter-spacing: -1.5px; margin-bottom: 12px; }
+.pricing-header p { font-size: 17px; color: var(--text2); }
+.pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 80px; }
+.pricing-card { background: var(--bg2); border: 1px solid var(--border2); border-radius: 20px; padding: 32px; position: relative; overflow: hidden; }
+.pricing-card-pro { background: linear-gradient(135deg, rgba(245,166,35,0.05), rgba(155,116,245,0.04)); border-color: rgba(245,166,35,0.25); }
+.pro-badge { position: absolute; top: 18px; right: 18px; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--accent); background: rgba(245,166,35,0.12); border: 1px solid rgba(245,166,35,0.3); padding: 4px 10px; border-radius: 100px; }
+.plan-top { margin-bottom: 28px; }
+.plan-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text3); margin-bottom: 10px; }
+.plan-price { font-family: 'Syne', sans-serif; font-size: 48px; font-weight: 800; color: var(--text); letter-spacing: -2px; line-height: 1; margin-bottom: 12px; }
+.plan-price span { font-size: 16px; color: var(--text3); font-weight: 400; }
+.plan-desc { font-size: 13.5px; color: var(--text2); line-height: 1.6; }
+.plan-features { display: flex; flex-direction: column; gap: 10px; }
+.plan-feature { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text2); }
+.feature-check { flex-shrink: 0; display: flex; }
+.feature-check.green { color: var(--green); }
+.feature-check.amber { color: var(--accent); }
+
+/* Table */
+.comparison-section { margin-bottom: 80px; }
+.comparison-section h2, .pricing-faq h2 { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; margin-bottom: 24px; }
+.comparison-table { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.comp-header { display: grid; grid-template-columns: 1fr 100px 100px; padding: 14px 20px; background: var(--bg3); border-bottom: 1px solid var(--border); font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); }
+.comp-header > div:nth-child(2), .comp-header > div:nth-child(3) { text-align: center; }
+.comp-row { display: grid; grid-template-columns: 1fr 100px 100px; padding: 12px 20px; border-bottom: 1px solid var(--border); }
+.comp-row:last-child { border-bottom: none; }
+.comp-row:hover { background: var(--surface); }
+.comp-feature { font-size: 13px; color: var(--text2); display: flex; align-items: center; }
+.comp-val { display: flex; align-items: center; justify-content: center; font-size: 13px; }
+.comp-text { font-size: 11.5px; color: var(--text3); text-align: center; }
+.tick { font-size: 16px; font-weight: 700; }
+.tick.green { color: var(--green); }
+.tick.amber { color: var(--accent); }
+.cross { color: var(--text3); font-size: 16px; }
+
+/* FAQ */
+.pricing-faq { }
+.faq-item { padding: 20px 0; border-bottom: 1px solid var(--border); }
+.faq-item:last-child { border-bottom: none; }
+.faq-q { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.faq-a { font-size: 13.5px; color: var(--text2); line-height: 1.7; }
+
+@media (max-width: 700px) {
+  .pricing-grid { grid-template-columns: 1fr; }
+  .comp-header, .comp-row { grid-template-columns: 1fr 70px 70px; }
+}

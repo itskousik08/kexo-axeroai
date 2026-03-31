@@ -1,0 +1,121 @@
+/* ============================================
+   KEXO AI v2 — Global Styles
+   Exact design system from v1, React-adapted
+============================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0f0f11; --bg2: #17171a; --bg3: #1e1e22;
+  --surface: #22222a; --surface2: #2a2a35;
+  --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14);
+  --text: #f0eff4; --text2: #a09fad; --text3: #6b6a7a;
+  --accent: #f5a623; --accent2: #ff6b35;
+  --blue: #4f8ef7; --green: #2dd4a0; --rose: #f25f7a; --violet: #9b74f5;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.5);
+  --shadow-lg: 0 8px 48px rgba(0,0,0,0.6);
+}
+
+body.light-mode {
+  --bg: #f4f4f8; --bg2: #ffffff; --bg3: #eeeef5;
+  --surface: #ffffff; --surface2: #f0f0f7;
+  --border: rgba(0,0,0,0.08); --border2: rgba(0,0,0,0.13);
+  --text: #12111a; --text2: #5a5970; --text3: #9090a8;
+  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 48px rgba(0,0,0,0.12);
+}
+
+html, body, #root { height: 100%; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 14px;
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+
+/* Workspace body locks scroll */
+body.workspace-page { overflow: hidden; }
+
+/* ===== SHARED BUTTONS ===== */
+.btn-primary {
+  display: flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #000; padding: 12px 24px; border-radius: 12px;
+  font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+  text-decoration: none; border: none; cursor: pointer;
+  box-shadow: 0 6px 28px rgba(245,166,35,0.35);
+  transition: all 0.2s;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(245,166,35,0.45); }
+.btn-primary:active { transform: scale(0.97); }
+
+.btn-outline {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface); color: var(--text);
+  padding: 12px 24px; border-radius: 12px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+  text-decoration: none; border: 1px solid var(--border2); cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-outline:hover { background: var(--surface2); border-color: rgba(255,255,255,0.22); }
+
+.btn-ghost {
+  display: flex; align-items: center; gap: 6px;
+  background: none; border: 1px solid var(--border); color: var(--text2);
+  padding: 7px 14px; border-radius: 8px;
+  font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s;
+}
+.btn-ghost:hover { background: var(--surface); color: var(--text); border-color: var(--border2); }
+
+/* ===== TOAST ===== */
+.toast-global {
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--surface); border: 1px solid var(--border2); color: var(--text);
+  padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 500;
+  z-index: 9999; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: var(--shadow-lg); pointer-events: none; white-space: nowrap;
+}
+.toast-global.show { transform: translateX(-50%) translateY(0); }
+
+/* ===== MODAL OVERLAY ===== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(8px); z-index: 500;
+  display: flex; align-items: center; justify-content: center;
+  animation: fade-in 0.15s ease;
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-box {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 16px; padding: 28px; min-width: 400px; max-width: 540px; width: 90%;
+  box-shadow: var(--shadow-lg); animation: slide-up 0.2s ease;
+  max-height: 90vh; overflow-y: auto;
+}
+@keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.modal-title { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; color: var(--text); }
+.modal-close {
+  width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+  background: none; border: 1px solid var(--border); color: var(--text3);
+  border-radius: 8px; cursor: pointer; transition: all 0.15s;
+}
+.modal-close:hover { background: var(--surface); color: var(--text); }
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 4px; }
+
+/* ===== ANIMATIONS ===== */
+@keyframes node-in { from { opacity: 0; transform: scale(0.88); } to { opacity: 1; transform: scale(1); } }
+@keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(0.85); } }
+@keyframes dash-flow { to { stroke-dashoffset: -9; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+  .modal-box { min-width: unset; padding: 20px; }
+}
