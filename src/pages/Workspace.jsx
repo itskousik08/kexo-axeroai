@@ -42,7 +42,7 @@ export default function Workspace() {
     return () => window.removeEventListener('keydown', down);
   }, [state.selectedNode, state.selectedConnection]);
 
-  // Signature theme (Flow Canvas) — box + connection system
+  // Signature (Flow Canvas)
   if (theme === 'signature') {
     return (
       <div className="workspace">
@@ -51,6 +51,7 @@ export default function Workspace() {
           <Sidebar />
           <div className="workspace-canvas-wrap">
             <CanvasArea />
+            {/* BUG FIX: FloatingBar hidden when AI panel is open on mobile */}
             <FloatingBar hidden={state.aiPanelOpen} />
             <ConnectIndicator />
           </div>
@@ -62,12 +63,13 @@ export default function Workspace() {
     );
   }
 
-  // Traditional theme — linear notepad
+  // Traditional
   if (theme === 'traditional') {
     return (
       <div className="workspace">
         <WorkspaceHeader projectId={projectId} theme={theme} />
         <div className="workspace-body workspace-body--full">
+          {/* TraditionalCanvas includes its own FloatingBar + VoiceModal + AIPanel */}
           <TraditionalCanvas />
         </div>
         {state.sharePanelOpen && <SharePanel />}
@@ -76,15 +78,15 @@ export default function Workspace() {
     );
   }
 
-  // Free Canvas theme — click anywhere
+  // Free Canvas
   if (theme === 'freecanvas') {
     return (
       <div className="workspace">
         <WorkspaceHeader projectId={projectId} theme={theme} />
         <div className="workspace-body workspace-body--full">
+          {/* FreeCanvas includes its own FloatingBar + AIPanel */}
           <FreeCanvas />
         </div>
-        {state.aiPanelOpen && <AIPanel />}
         {state.sharePanelOpen && <SharePanel />}
         <Toast />
       </div>
