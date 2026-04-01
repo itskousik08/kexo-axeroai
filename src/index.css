@@ -119,3 +119,47 @@ body.workspace-page { overflow: hidden; }
 @media (max-width: 768px) {
   .modal-box { min-width: unset; padding: 20px; }
 }
+
+/* ===== GLOBAL RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .modal-box { min-width: unset; padding: 20px; width: calc(100% - 32px); }
+  .modal-overlay { padding: 16px; align-items: flex-end; }
+  .modal-box { border-radius: 16px 16px 0 0; max-height: 85vh; }
+}
+
+/* Landing responsive */
+@media (max-width: 600px) {
+  .landing-nav { padding: 0 16px; }
+  .hero { padding: 100px 16px 60px; }
+  .hero h1 { font-size: 36px; letter-spacing: -1px; }
+  .hero-sub { font-size: 15px; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions a { justify-content: center; }
+  section { padding: 64px 16px; }
+}
+
+/* Dashboard nav responsive */
+@media (max-width: 600px) {
+  .dash-header { padding: 0 14px; gap: 10px; }
+  .dash-body { padding: 24px 14px; }
+  .dash-topbar { flex-direction: column; gap: 14px; }
+  .dash-topbar > div:last-child { width: 100%; display: flex; gap: 8px; }
+  .btn-new, .btn-outline { flex: 1; justify-content: center; }
+}
+
+/* Settings responsive */
+@media (max-width: 600px) {
+  .settings-body { padding: 24px 16px; }
+  .settings-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .theme-toggle-group { width: 100%; }
+  .theme-btn { flex: 1; justify-content: center; }
+  .danger-btn { width: 100%; justify-content: center; }
+}
+
+/* Pricing responsive */
+@media (max-width: 600px) {
+  .pricing-body { padding: 40px 16px 80px; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .comp-header, .comp-row { grid-template-columns: 1fr 70px 70px; }
+  .pricing-nav { padding: 0 16px; }
+}
