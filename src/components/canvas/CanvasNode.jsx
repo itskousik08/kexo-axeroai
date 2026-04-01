@@ -10,18 +10,15 @@ export default function CanvasNode({ node, isSelected, isBulkSelected, isUnlinkS
   const n = node;
   const isMedia = n.isFreeImage || n.isPdfNode;
 
-  // ── Drag ───────────────────────────────────────────────────────────────────
-  const dragRef = useRef({});
+  // Drag
   const onMouseDown = useCallback((e) => {
     if (e.button !== 0) return;
     if (e.target.closest('[contenteditable],[data-resize],.node-btn,.connector-dot')) return;
     e.preventDefault();
     actions.selectNode(n.id);
     const startX = n.x, startY = n.y, startMX = e.clientX, startMY = e.clientY;
-    dragRef.current = { startX, startY, startMX, startMY };
     elRef.current?.classList.add('dragging');
     elRef.current && (elRef.current.style.zIndex = '100');
-
     const mv = (ev) => {
       const nx = startX + (ev.clientX - startMX) / state.zoom;
       const ny = startY + (ev.clientY - startMY) / state.zoom;
@@ -40,7 +37,7 @@ export default function CanvasNode({ node, isSelected, isBulkSelected, isUnlinkS
 
   // Touch drag
   const onTouchStart = useCallback((e) => {
-    if (e.target.closest('[contenteditable],[data-resize],.node-btn,.connector-dot,.node-tag')) return;
+    if (e.target.closest('[contenteditable],[data-resize],.node-btn,.connector-dot')) return;
     const t = e.touches[0];
     const startX = n.x, startY = n.y, startMX = t.clientX, startMY = t.clientY;
     const mv = (ev) => {
@@ -52,7 +49,7 @@ export default function CanvasNode({ node, isSelected, isBulkSelected, isUnlinkS
     window.addEventListener('touchend', up);
   }, [n.x, n.y, state.zoom, n.id]);
 
-  // ── Resize ─────────────────────────────────────────────────────────────────
+  // Resize width
   const onResizeDown = useCallback((e) => {
     e.stopPropagation(); e.preventDefault();
     const startW = n.w, startX = e.clientX;
@@ -64,6 +61,7 @@ export default function CanvasNode({ node, isSelected, isBulkSelected, isUnlinkS
     window.addEventListener('mousemove', mv); window.addEventListener('mouseup', up);
   }, [n.w, state.zoom, n.id]);
 
+  // Resize both
   const onResizeBothDown = useCallback((e) => {
     e.stopPropagation(); e.preventDefault();
     const startW = n.w, startH = n.h || elRef.current?.offsetHeight || 200, startX = e.clientX;
@@ -76,9 +74,9 @@ export default function CanvasNode({ node, isSelected, isBulkSelected, isUnlinkS
     window.addEventListener('mousemove', mv); window.addEventListener('mouseup', up);
   }, [n.w, n.h, state.zoom, n.id]);
 
-  // ── Click ──────────────────────────────────────────────────────────────────
+  // Click
   const onClick = (e) => {
-    if (e.target.closest('[contenteditable],.node-btn,.connector-dot,[data-resize],.node-tag')) return;
+    if (e.target.closest('[contenteditable],.node-btn,.connector-dot,[data-resize]')) return;
     if (state.connectMode && state.connectSource) {
       if (state.connectSource !== n.id) actions.createConnection(state.connectSource, 'bottom', n.id, 'top');
       actions.cancelConnect();
@@ -102,10 +100,10 @@ export default function CanvasNode({ node, isSelected, isBulkSelected, isUnlinkS
 
   const sizeButtons = isMedia ? (
     <>
-      <button className="node-btn" onClick={() => { const d = -40; const r = n.h ? n.w / n.h : 1.33; const nw = Math.max(120, n.w + d); actions.updateNode(n.id, { w: nw, h: Math.round(nw / r) }); }} title="Shrink">
+      <button className="node-btn" onClick={() => { const r = n.h ? n.w/n.h : 1.33; const nw = Math.max(120, n.w-40); actions.updateNode(n.id, { w: nw, h: Math.round(nw/r) }); }} title="Shrink">
         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="5" y1="12" x2="19" y2="12"/></svg>
       </button>
-      <button className="node-btn" onClick={() => { const d = 40; const r = n.h ? n.w / n.h : 1.33; const nw = Math.min(1200, n.w + d); actions.updateNode(n.id, { w: nw, h: Math.round(nw / r) }); }} title="Grow">
+      <button className="node-btn" onClick={() => { const r = n.h ? n.w/n.h : 1.33; const nw = Math.min(1200, n.w+40); actions.updateNode(n.id, { w: nw, h: Math.round(nw/r) }); }} title="Grow">
         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       </button>
     </>
@@ -116,7 +114,7 @@ export default function CanvasNode({ node, isSelected, isBulkSelected, isUnlinkS
       <span className={`node-type ${n.type}`}>{n.isPdfNode ? 'PDF' : n.type}</span>
       {n.timestamp > 0 && (
         <span className="node-timestamp" onClick={() => window.dispatchEvent(new CustomEvent('kexo:jumpTimestamp', { detail: n.timestamp }))} title={`Jump to ${formatTime(n.timestamp)}`}>
-          ⏱ {formatTime(n.timestamp)}
+          {formatTime(n.timestamp)}
         </span>
       )}
       <div className="node-actions-top">
@@ -160,10 +158,7 @@ export default function CanvasNode({ node, isSelected, isBulkSelected, isUnlinkS
         ref={elRef}
         id={n.id}
         className={nodeClasses}
-        style={{
-          left: n.x, top: n.y, width: n.w,
-          ...(isMedia && n.h ? { height: n.h } : {}),
-        }}
+        style={{ left: n.x, top: n.y, width: n.w, ...(isMedia && n.h ? { height: n.h } : {}) }}
         onMouseDown={onMouseDown}
         onTouchStart={onTouchStart}
         onClick={onClick}
@@ -181,33 +176,25 @@ export default function CanvasNode({ node, isSelected, isBulkSelected, isUnlinkS
               <div
                 className="node-title"
                 contentEditable suppressContentEditableWarning
-                placeholder="Node title…"
+                data-placeholder="Node title…"
                 onInput={(e) => actions.updateNode(n.id, { title: e.currentTarget.innerText })}
                 onMouseDown={(e) => e.stopPropagation()}
               >{n.title}</div>
               <div
                 className="node-desc"
                 contentEditable suppressContentEditableWarning
-                placeholder="Add notes…"
+                data-placeholder="Add notes…"
                 onInput={(e) => actions.updateNode(n.id, { desc: e.currentTarget.innerText })}
                 onMouseDown={(e) => e.stopPropagation()}
               >{n.desc}</div>
             </div>
-            {/* Audio */}
-            <div className="node-audio" onMouseDown={e => e.stopPropagation()}>
-              {n.audioData ? (
-                <>
-                  <div className="node-audio-label">🎙 Voice Note</div>
-                  <audio controls src={n.audioData} style={{ width: '100%', height: 28 }} />
-                </>
-              ) : (
-                <label className="node-audio-upload" title="Attach voice note">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
-                  <span>Attach audio</span>
-                  <input type="file" accept="audio/*" style={{ display: 'none' }} onChange={handleAudioUpload} />
-                </label>
-              )}
-            </div>
+            {/* BUG FIX: Show audio player only when audioData exists. Removed "attach audio" label per new spec. */}
+            {n.audioData && (
+              <div className="node-audio" onMouseDown={e => e.stopPropagation()}>
+                <div className="node-audio-label">Voice Note</div>
+                <audio controls src={n.audioData} style={{ width: '100%', height: 28 }} />
+              </div>
+            )}
           </>
         )}
 
@@ -217,13 +204,8 @@ export default function CanvasNode({ node, isSelected, isBulkSelected, isUnlinkS
           : <div className="node-resize" data-resize={n.id} onMouseDown={onResizeDown} />}
       </div>
 
-      {/* Inline color picker */}
       {colorPickerPos && (
-        <InlineColorPicker
-          nodeId={n.id}
-          pos={colorPickerPos}
-          onClose={() => setColorPickerPos(null)}
-        />
+        <InlineColorPicker nodeId={n.id} pos={colorPickerPos} onClose={() => setColorPickerPos(null)} />
       )}
     </>
   );

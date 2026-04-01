@@ -9,7 +9,6 @@ export default function CanvasArea() {
   const { state, actions } = useApp();
   const scrollRef = useRef(null);
   const svgRef = useRef(null);
-  const [fabOpen, setFabOpen] = useState(false);
   const [spaceDown, setSpaceDown] = useState(false);
   const [isPanning, setIsPanning] = useState(false);
   const panRef = useRef({});
@@ -18,11 +17,7 @@ export default function CanvasArea() {
   const connDragRef = useRef(null);
   const [selectedConnId, setSelectedConnId] = useState(null);
   const [connDeleteBtn, setConnDeleteBtn] = useState(null);
-  // Bulk select
-  const [dragBox, setDragBox] = useState(null);
-  const dragBoxRef = useRef(null);
 
-  // Forward scroll ref to window for minimap
   useEffect(() => { window._kexoScrollRef = scrollRef; }, []);
 
   // Space key for panning
@@ -44,7 +39,7 @@ export default function CanvasArea() {
     return () => { window.removeEventListener('keydown', dn); window.removeEventListener('keyup', up); };
   }, []);
 
-  // Export canvas event
+  // Export canvas
   useEffect(() => {
     const handler = async () => {
       actions.showToast('Preparing export…');
@@ -55,17 +50,17 @@ export default function CanvasArea() {
         const a = document.createElement('a');
         a.download = `kexo-canvas-${Date.now()}.png`; a.href = canvas.toDataURL('image/png'); a.click();
         actions.showToast('Canvas exported!');
-      } catch (e) { actions.showToast('Export failed'); }
+      } catch { actions.showToast('Export failed'); }
     };
     window.addEventListener('kexo:exportCanvas', handler);
     return () => window.removeEventListener('kexo:exportCanvas', handler);
   }, []);
 
-  // Sidebar toggle event
+  // Sidebar toggle
   useEffect(() => {
     const handler = () => {
       const sb = document.getElementById('kexo-sidebar');
-      if (sb) sb.classList.toggle('collapsed');
+      if (sb) sb.classList.toggle('sidebar--collapsed');
     };
     window.addEventListener('kexo:toggleSidebar', handler);
     return () => window.removeEventListener('kexo:toggleSidebar', handler);
@@ -73,14 +68,13 @@ export default function CanvasArea() {
 
   // Scroll → minimap
   useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
+    const el = scrollRef.current; if (!el) return;
     const h = () => window.dispatchEvent(new Event('kexo:minimapUpdate'));
     el.addEventListener('scroll', h);
     return () => el.removeEventListener('scroll', h);
   }, []);
 
-  // Pan handlers
+  // Pan
   const onScrollMouseDown = (e) => {
     if (!spaceDown) return;
     setIsPanning(true);
@@ -105,8 +99,7 @@ export default function CanvasArea() {
 
   // Ctrl+wheel zoom
   useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
+    const el = scrollRef.current; if (!el) return;
     const handler = (e) => {
       if (e.ctrlKey || e.metaKey) { e.preventDefault(); actions.setZoom(state.zoom - e.deltaY * 0.001); }
     };
@@ -114,14 +107,14 @@ export default function CanvasArea() {
     return () => el.removeEventListener('wheel', handler);
   }, [state.zoom]);
 
-  // Apply zoom transform
+  // Apply zoom
   useEffect(() => {
     const t = document.getElementById('canvasTransform');
     if (t) t.style.transform = `scale(${state.zoom})`;
     window.dispatchEvent(new Event('kexo:minimapUpdate'));
   }, [state.zoom]);
 
-  // ── Connector drag (SVG temp path) ────────────────────────────────────────
+  // Connector drag
   const onConnectorDown = useCallback((e, nodeId, side) => {
     e.stopPropagation(); e.preventDefault();
     connDragRef.current = { nodeId, side };
@@ -153,7 +146,7 @@ export default function CanvasArea() {
     window.addEventListener('mouseup', up);
   }, [state.nodes, state.zoom]);
 
-  // ── Canvas click deselect ─────────────────────────────────────────────────
+  // Canvas click deselect
   const onCanvasClick = (e) => {
     if (e.target === e.currentTarget || e.target.id === 'connectionsSvg' || e.target.closest('.connections-svg')) {
       actions.deselectAll();
@@ -164,7 +157,7 @@ export default function CanvasArea() {
     }
   };
 
-  // ── Build connections SVG ─────────────────────────────────────────────────
+  // Build connections SVG
   const renderConnections = () => {
     return state.connections
       .filter(c => state.nodes[c.from] && state.nodes[c.to])
@@ -187,21 +180,13 @@ export default function CanvasArea() {
       });
   };
 
-  // Visible node ids based on search
+  // Search highlighting — BUG FIX: removed activeTagFilter (not in state)
   const getNodeClass = (n) => {
     const q = state.searchQuery.toLowerCase().trim();
     if (!q) return '';
-    const matches = n.title?.toLowerCase().includes(q) || n.desc?.toLowerCase().includes(q) || (n.tags || []).some(t => t.toLowerCase().includes(q));
+    const matches = n.title?.toLowerCase().includes(q) || n.desc?.toLowerCase().includes(q);
     return matches ? 'search-match' : 'search-hidden';
   };
-
-  // Tag filter
-  const isTagFiltered = (n) => {
-    if (!state.activeTagFilter) return false;
-    return !(n.tags || []).includes(state.activeTagFilter);
-  };
-
-  const addNode = (type) => { actions.addNode(type); setFabOpen(false); };
 
   return (
     <main className="canvas-area">
@@ -234,10 +219,7 @@ export default function CanvasArea() {
       </div>
 
       {/* Scrollable canvas */}
-      <div
-        className="canvas-scroll" id="canvasScroll" ref={scrollRef}
-        onMouseDown={onScrollMouseDown}
-      >
+      <div className="canvas-scroll" id="canvasScroll" ref={scrollRef} onMouseDown={onScrollMouseDown}>
         <div className="canvas-transform" id="canvasTransform">
           <div
             className={`canvas-infinite${state.gridVisible ? ' grid-lines' : ''}`}
@@ -256,7 +238,7 @@ export default function CanvasArea() {
                   isSelected={state.selectedNode === n.id}
                   isBulkSelected={state.selectedNodes.includes(n.id)}
                   isUnlinkSource={state.unlinkFirstNode === n.id}
-                  extraClass={`${getNodeClass(n)}${isTagFiltered(n) ? ' search-hidden' : ''}`}
+                  extraClass={getNodeClass(n)}
                   onConnectorDown={onConnectorDown}
                 />
               ))}
@@ -265,9 +247,7 @@ export default function CanvasArea() {
         </div>
       </div>
 
-      {/* FAB removed — controls now in FloatingBar */}
-
-      {/* Conn delete btn */}
+      {/* Connection delete button */}
       {connDeleteBtn && (
         <button
           className="conn-delete-btn"
@@ -279,51 +259,6 @@ export default function CanvasArea() {
       )}
 
       <Minimap scrollRef={scrollRef} />
-
     </main>
   );
-}
-
-// ── Image upload helper ───────────────────────────────────────────────────────
-function handleImageUpload(e, actions, state) {
-  const file = e.target.files?.[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    const img = new Image();
-    img.onload = () => {
-      const w = 300, h = Math.round(w / (img.naturalWidth / img.naturalHeight));
-      const scroll = document.getElementById('canvasScroll');
-      const x = scroll ? (scroll.scrollLeft / state.zoom) + 60 + Math.random() * 140 : 200;
-      const y = scroll ? (scroll.scrollTop / state.zoom) + 60 + Math.random() * 140 : 200;
-      const id = actions.addNode('image', 'Image', '', 0, ev.target.result, { isFreeImage: true, w, h, x, y });
-    };
-    img.src = ev.target.result;
-  };
-  reader.readAsDataURL(file);
-  e.target.value = '';
-}
-
-// ── PDF upload helper ─────────────────────────────────────────────────────────
-async function handlePdfUpload(e, actions, state) {
-  const file = e.target.files?.[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = async (ev) => {
-    try {
-      if (typeof pdfjsLib === 'undefined') { actions.showToast('PDF.js not loaded'); return; }
-      const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(ev.target.result) }).promise;
-      const page = await pdf.getPage(1);
-      const viewport = page.getViewport({ scale: 1.5 });
-      const canvas = document.createElement('canvas');
-      canvas.width = viewport.width; canvas.height = viewport.height;
-      await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-      const src = canvas.toDataURL('image/png');
-      const w = 300, h = Math.round(300 / (viewport.width / viewport.height));
-      const scroll = document.getElementById('canvasScroll');
-      const x = scroll ? (scroll.scrollLeft / state.zoom) + 60 + Math.random() * 140 : 200;
-      const y = scroll ? (scroll.scrollTop / state.zoom) + 60 + Math.random() * 140 : 200;
-      actions.addNode('pdf', file.name, '', 0, src, { isPdfNode: true, w, h, x, y });
-    } catch (err) { actions.showToast('PDF error: ' + err.message); }
-  };
-  reader.readAsArrayBuffer(file);
-  e.target.value = '';
 }
