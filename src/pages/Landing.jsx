@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import BrandLogo from '../components/ui/BrandLogo';
 import './Landing.css';
 
 export default function Landing() {
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <div className="landing">
       {/* NAV */}
@@ -12,10 +13,11 @@ export default function Landing() {
           <BrandLogo size={36} />
           <span className="brand-name">kexo <em>AI</em></span>
         </Link>
-        <div className="nav-links">
+        <div className="nav-links nav-links--desktop">
           <a href="#features" className="nav-link">Features</a>
           <a href="#roadmap" className="nav-link">Roadmap</a>
           <Link to="/pricing" className="nav-link">Pricing</Link>
+          <Link to="/settings" className="nav-link">Settings</Link>
           <Link to="/dashboard" className="btn-nav-cta">
             Start Free
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -23,6 +25,20 @@ export default function Landing() {
             </svg>
           </Link>
         </div>
+        <button className="nav-hamburger" onClick={() => setMenuOpen(m => !m)} aria-label="Open menu">
+          {menuOpen
+            ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            : <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>}
+        </button>
+        {menuOpen && (
+          <div className="nav-drawer" onClick={() => setMenuOpen(false)}>
+            <a href="#features" className="nav-drawer-link">Features</a>
+            <a href="#roadmap" className="nav-drawer-link">Roadmap</a>
+            <Link to="/pricing" className="nav-drawer-link">Pricing</Link>
+            <Link to="/settings" className="nav-drawer-link">Settings</Link>
+            <Link to="/dashboard" className="btn-nav-cta" style={{justifyContent:"center", marginTop:8}}>Start Free</Link>
+          </div>
+        )}
       </nav>
 
       {/* HERO */}
