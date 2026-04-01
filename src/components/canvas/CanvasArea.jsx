@@ -265,40 +265,7 @@ export default function CanvasArea() {
         </div>
       </div>
 
-      {/* FAB */}
-      <div className="fab-group">
-        <div className={`fab-menu${fabOpen ? ' visible' : ''}`}>
-          {[
-            { type: 'concept', label: 'Concept', icon: '<rect x="2" y="2" width="20" height="20" rx="4"/><path d="M12 8v8M8 12h8"/>' },
-            { type: 'question', label: 'Question', icon: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>' },
-            { type: 'note', label: 'Note', icon: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>' },
-            { type: 'image', label: 'Image', isUpload: true },
-            { type: 'pdf', label: 'PDF', isPdf: true },
-          ].map(item => (
-            item.isUpload ? (
-              <label key="image" className="fab-item" style={{ cursor: 'pointer' }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                Image
-                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => { handleImageUpload(e, actions, state); setFabOpen(false); }} />
-              </label>
-            ) : item.isPdf ? (
-              <label key="pdf" className="fab-item" style={{ cursor: 'pointer' }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                PDF
-                <input type="file" accept="application/pdf" style={{ display: 'none' }} onChange={(e) => { handlePdfUpload(e, actions, state); setFabOpen(false); }} />
-              </label>
-            ) : (
-              <button key={item.type} className="fab-item" onClick={() => addNode(item.type)}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" dangerouslySetInnerHTML={{ __html: item.icon }} />
-                {item.label}
-              </button>
-            )
-          ))}
-        </div>
-        <button className={`fab-main${fabOpen ? ' open' : ''}`} onClick={() => setFabOpen(f => !f)} title="Add Node">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </button>
-      </div>
+      {/* FAB removed — controls now in FloatingBar */}
 
       {/* Conn delete btn */}
       {connDeleteBtn && (
@@ -313,13 +280,6 @@ export default function CanvasArea() {
 
       <Minimap scrollRef={scrollRef} />
 
-      <div className="shortcuts-hint">
-        <span>T — timestamp</span>
-        <span>Del — delete</span>
-        <span>Ctrl+Z — undo</span>
-        <span>Space+drag — pan</span>
-        <span>Esc — cancel</span>
-      </div>
     </main>
   );
 }

@@ -2,17 +2,10 @@ import React, { useRef, useCallback, useState } from 'react';
 import { useApp } from '../../store/AppContext';
 import { formatTime } from '../../utils/helpers';
 
-const TAG_COLORS = {
-  important: '#f25f7a', review: '#f5a623', question: '#9b74f5',
-  idea: '#4f8ef7', done: '#2dd4a0', todo: '#a09fad',
-};
-
 export default function CanvasNode({ node, isSelected, isBulkSelected, isUnlinkSource, extraClass, onConnectorDown }) {
   const { state, actions } = useApp();
   const elRef = useRef(null);
   const [colorPickerPos, setColorPickerPos] = useState(null);
-  const [tagInput, setTagInput] = useState('');
-  const [showTagInput, setShowTagInput] = useState(false);
 
   const n = node;
   const isMedia = n.isFreeImage || n.isPdfNode;
@@ -21,7 +14,7 @@ export default function CanvasNode({ node, isSelected, isBulkSelected, isUnlinkS
   const dragRef = useRef({});
   const onMouseDown = useCallback((e) => {
     if (e.button !== 0) return;
-    if (e.target.closest('[contenteditable],[data-resize],.node-btn,.connector-dot,.node-tag,.node-audio')) return;
+    if (e.target.closest('[contenteditable],[data-resize],.node-btn,.connector-dot')) return;
     e.preventDefault();
     actions.selectNode(n.id);
     const startX = n.x, startY = n.y, startMX = e.clientX, startMY = e.clientY;
@@ -97,15 +90,6 @@ export default function CanvasNode({ node, isSelected, isBulkSelected, isUnlinkS
     actions.selectNode(n.id);
   };
 
-  // ── Audio upload ───────────────────────────────────────────────────────────
-  const handleAudioUpload = (e) => {
-    const file = e.target.files?.[0]; if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => { actions.updateNode(n.id, { audioData: ev.target.result, audioName: file.name }); };
-    reader.readAsDataURL(file);
-    e.target.value = '';
-  };
-
   const nodeClasses = [
     'node',
     isMedia ? 'node-media' : '',
@@ -170,38 +154,6 @@ export default function CanvasNode({ node, isSelected, isBulkSelected, isUnlinkS
     </div>
   );
 
-  const tagsSection = (
-    <div className="node-tags">
-      {(n.tags || []).map(tag => (
-        <span
-          key={tag}
-          className="node-tag"
-          style={{ background: (TAG_COLORS[tag] || '#6b6a7a') + '22', color: TAG_COLORS[tag] || '#6b6a7a', border: `1px solid ${(TAG_COLORS[tag] || '#6b6a7a')}44` }}
-          onClick={(e) => { e.stopPropagation(); actions.removeTagFromNode(n.id, tag); }}
-          title={`Remove tag: ${tag}`}
-        >
-          {tag}
-        </span>
-      ))}
-      {showTagInput ? (
-        <input
-          className="node-tag-input"
-          style={{ background: 'var(--bg3)', border: '1px solid var(--border2)', borderRadius: 100, fontSize: 9, padding: '2px 6px', color: 'var(--text)', outline: 'none', width: 70 }}
-          autoFocus placeholder="tag…" value={tagInput}
-          onChange={e => setTagInput(e.target.value)}
-          onKeyDown={e => {
-            if (e.key === 'Enter') { actions.addTagToNode(n.id, tagInput); setTagInput(''); setShowTagInput(false); }
-            if (e.key === 'Escape') { setShowTagInput(false); setTagInput(''); }
-          }}
-          onBlur={() => { if (tagInput.trim()) actions.addTagToNode(n.id, tagInput); setTagInput(''); setShowTagInput(false); }}
-          onClick={e => e.stopPropagation()}
-        />
-      ) : (
-        <button className="node-tag-add" onClick={(e) => { e.stopPropagation(); setShowTagInput(true); }}>+ tag</button>
-      )}
-    </div>
-  );
-
   return (
     <>
       <div
@@ -241,7 +193,6 @@ export default function CanvasNode({ node, isSelected, isBulkSelected, isUnlinkS
                 onMouseDown={(e) => e.stopPropagation()}
               >{n.desc}</div>
             </div>
-            {tagsSection}
             {/* Audio */}
             <div className="node-audio" onMouseDown={e => e.stopPropagation()}>
               {n.audioData ? (
